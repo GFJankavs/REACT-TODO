@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
 import './parts/components/styles/TodoItem.scss';
 import TodoInput from './parts/components/TodoInput';
-import TodoItem from './parts/components/TodoItem';
-import TodoItemType from './interfaces/TodoItemType';
 import { useAppDispatch, useAppSelector } from './state/hooks';
 import { RootState } from './state/store';
 import {
   completeTodo, editTodoMode, updateTodoText, clearCompletedTodos,
+  TodoItem, initialLoad,
 } from './state/reducers/todosSlice';
 import TodoTaskList from './parts/components/TodoList';
+import useLocalStorage from './services/localStorage';
 
 const App = () => {
   const [showCompleted, setShowCompleted] = useState(false);
@@ -17,6 +17,24 @@ const App = () => {
   const todoItemList = useAppSelector((state: RootState) => state.todos);
 
   const dispatch = useAppDispatch();
+
+  const getStorageValue = (key: string, defaultValue: []) => {
+    // getting stored value
+    const saved = localStorage.getItem(key);
+    const initial = JSON.parse(saved || '[]');
+    return initial || defaultValue;
+  };
+
+  useEffect(() => {
+    dispatch(initialLoad(getStorageValue('todos', [])));
+  }, []);
+
+  useEffect(() => {
+    // storing input name
+    localStorage.setItem('todos', JSON.stringify(todoItemList));
+  }, [todoItemList]);
+
+  console.log(localStorage);
 
   const categoryTodos = todoItemList.filter((todo) => todo.tag === sortFilter);
 

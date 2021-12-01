@@ -1,9 +1,8 @@
-import React, { FC, useState } from 'react';
+import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../state/hooks';
 import { RootState } from '../../state/store';
 import TodoItem from './TodoItem';
 import { completeTodo, editTodoMode, updateTodoText } from '../../state/reducers/todosSlice';
-import TodoItemType from '../../interfaces/TodoItemType';
 
 interface TodoListType {
   filterType: string;
@@ -16,8 +15,6 @@ const TodoTaskList = (todoList: TodoListType) => {
   const filteredTodos = todoItemList?.filter((item) => item.isCompleted);
   const filteredTodosByTag = todoItemList.filter((item) => item.tag === todoList.filterType);
   const dispatch = useAppDispatch();
-
-  console.log(todoItemList.filter((item) => item.text !== ''));
 
   if (todoItemList.filter((item) => item.text !== '').length) {
     if (todoList.filterType !== 'All') {

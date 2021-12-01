@@ -26,7 +26,7 @@ const TodoItem: FC<TodoItemInterface> = ({
       style={{ cursor: item.editMode ? 'default' : 'pointer' }}
       onClick={() => {
         if (!item.editMode) {
-          dispatch(completeTodo(item.id));
+          todoClickHandler();
         }
       }}
     >
