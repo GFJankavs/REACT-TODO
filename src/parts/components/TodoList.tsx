@@ -7,19 +7,20 @@ import { completeTodo, editTodoMode, updateTodoText } from '../../state/reducers
 interface TodoListType {
   filterType: string;
   showCompletedList: boolean;
+  sortFilterHandler: (x: string) => void;
 }
 
-const TodoTaskList = (todoList: TodoListType) => {
+const TodoTaskList = ({ filterType, showCompletedList, sortFilterHandler }: TodoListType) => {
   const [editTodoText, setEditTodoText] = useState('');
   const todoItemList = useAppSelector((state: RootState) => state.todos);
-  const filteredTodos = todoItemList?.filter((item) => item.isCompleted);
-  const filteredTodosByTag = todoItemList.filter((item) => item.tag === todoList.filterType);
+  const filteredTodos = todoItemList.filter((item) => item.isCompleted);
+  const filteredTodosByTag = todoItemList.filter((item) => item.tag === filterType);
   const dispatch = useAppDispatch();
 
-  if (todoItemList.filter((item) => item.text !== '').length) {
-    if (todoList.filterType !== 'All') {
+  if (todoItemList.length) {
+    if (filterType !== 'All') {
       if (filteredTodosByTag.length) {
-        if (todoList.showCompletedList) {
+        if (showCompletedList) {
           if (filteredTodos.length) {
             return (
               <>
@@ -110,7 +111,7 @@ const TodoTaskList = (todoList: TodoListType) => {
     }
     return (
       <>
-        {todoItemList.filter((item) => item.text !== '')
+        {todoItemList.filter((item) => item.text)
           .map((item) => (
             <div
               className="todo-item__wrapper"
@@ -154,6 +155,7 @@ const TodoTaskList = (todoList: TodoListType) => {
       </>
     );
   }
+  sortFilterHandler('All');
   return <h1>No Tasks in the List</h1>;
 };
 

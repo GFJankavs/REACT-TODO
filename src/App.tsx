@@ -4,12 +4,9 @@ import './parts/components/styles/TodoItem.scss';
 import TodoInput from './parts/components/TodoInput';
 import { useAppDispatch, useAppSelector } from './state/hooks';
 import { RootState } from './state/store';
-import {
-  completeTodo, editTodoMode, updateTodoText, clearCompletedTodos,
-  TodoItem, initialLoad,
-} from './state/reducers/todosSlice';
+import { clearCompletedTodos, initialLoad, TodoItem } from './state/reducers/todosSlice';
 import TodoTaskList from './parts/components/TodoList';
-import useLocalStorage from './services/localStorage';
+import ProgressBar from './parts/components/ProgressBar';
 
 const App = () => {
   const [showCompleted, setShowCompleted] = useState(false);
@@ -18,11 +15,11 @@ const App = () => {
 
   const dispatch = useAppDispatch();
 
-  const getStorageValue = (key: string, defaultValue: []) => {
-    // getting stored value
+  console.log(localStorage);
+
+  const getStorageValue = (key: string, defaultValue: TodoItem[]) => {
     const saved = localStorage.getItem(key);
-    const initial = JSON.parse(saved || '[]');
-    return initial || defaultValue;
+    return JSON.parse(saved || '[]');
   };
 
   useEffect(() => {
@@ -30,11 +27,8 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // storing input name
     localStorage.setItem('todos', JSON.stringify(todoItemList));
   }, [todoItemList]);
-
-  console.log(localStorage);
 
   const categoryTodos = todoItemList.filter((todo) => todo.tag === sortFilter);
 
@@ -83,13 +77,14 @@ const App = () => {
           </select>
         </div>
       </div>
-
+      <ProgressBar />
       <div
         className="todo-list__container"
       >
         <TodoTaskList
           filterType={sortFilter}
           showCompletedList={showCompleted}
+          sortFilterHandler={setSortFilter}
         />
       </div>
     </div>
