@@ -1,69 +1,81 @@
 import React, { useState } from 'react';
 import './App.scss';
+import './parts/components/styles/TodoItem.scss';
 import TodoInput from './parts/components/TodoInput';
 import TodoItem from './parts/components/TodoItem';
+import TodoItemType from './interfaces/TodoItemType';
 import { useAppDispatch, useAppSelector } from './state/hooks';
 import { RootState } from './state/store';
-import { completeTodo } from './state/reducers/todosSlice';
+import {
+  completeTodo, editTodoMode, updateTodoText, clearCompletedTodos,
+} from './state/reducers/todosSlice';
+import TodoTaskList from './parts/components/TodoList';
 
 const App = () => {
   const [showCompleted, setShowCompleted] = useState(false);
+  const [sortFilter, setSortFilter] = useState('All');
   const todoItemList = useAppSelector((state: RootState) => state.todos);
 
   const dispatch = useAppDispatch();
 
-  const filteredTodos = todoItemList.filter((item) => item.isCompleted);
+  const categoryTodos = todoItemList.filter((todo) => todo.tag === sortFilter);
 
-  console.log('todos: ', todoItemList);
+  const filteredTodos = todoItemList?.filter((item) => item.isCompleted);
+
   return (
     <div className="app">
       <TodoInput />
       <div
-        className="todo-list__container"
+        className="todo-list__button-container"
       >
-        {/* eslint-disable-next-line no-nested-ternary */}
-        {todoItemList.length > 0 ? (
-        // eslint-disable-next-line no-nested-ternary
-          showCompleted ? (
-            filteredTodos.length ? (
-              filteredTodos.map((item, index) => (
-                <div
-                  className="todo-item__wrapper"
-                >
-                  <TodoItem
-                    key={item.id}
-                    item={item}
-                    todoClickHandler={() => dispatch(completeTodo(item.id))}
-                  />
-                </div>
-              ))
-            ) : (
-              <h1>No Completed Tasks in the List</h1>
-            )
-          ) : (
-            todoItemList.map((item, index) => (
-              <div
-                className="todo-item__wrapper"
-              >
-                <TodoItem
-                  key={item.id}
-                  item={item}
-                  todoClickHandler={() => dispatch(completeTodo(item.id))}
-                />
-              </div>
-            )))
-        ) : (
-          <h1>No Tasks in the List</h1>
-        )}
         <button
-          style={{ visibility: todoItemList.length ? 'visible' : 'hidden' }}
           className="todo-list__toggle todo-input__button"
+          disabled={!todoItemList.length}
           onClick={() => setShowCompleted(!showCompleted)}
         >
           Show Completed
         </button>
+        <button
+          disabled={!todoItemList.length}
+          className="todo-list__toggle todo-input__button"
+          onClick={() => dispatch(clearCompletedTodos())}
+        >
+          Clear All Completed Tasks
+        </button>
+        <div
+          className={!todoItemList.length ? 'todo-list__filter-container todo-list__filter-container--disabled' : 'todo-list__filter-container'}
+        >
+          <span
+            className="todo-list__filter-text"
+          >
+            Filter by:
+          </span>
+          <select
+            disabled={!todoItemList.length}
+            className="todo-list__filter"
+            name="tag"
+            id="tag"
+            onChange={(e) => setSortFilter(e.target.value)}
+            value={sortFilter}
+          >
+            <option value="All">All</option>
+            <option value="Today">Today</option>
+            <option value="This Week">This Week</option>
+            <option value="This Month">This Month</option>
+          </select>
+        </div>
+      </div>
+
+      <div
+        className="todo-list__container"
+      >
+        <TodoTaskList
+          filterType={sortFilter}
+          showCompletedList={showCompleted}
+        />
       </div>
     </div>
+
   );
 };
 

@@ -7,6 +7,7 @@ import { useAppDispatch } from '../../state/hooks';
 
 const TodoInput = () => {
   const [inputText, setInputText] = useState('');
+  const [isInvalid, setIsInvalid] = useState(false);
   const input = useRef< HTMLInputElement | null>(null);
 
   const dispatch = useAppDispatch();
@@ -37,14 +38,33 @@ const TodoInput = () => {
           className="todo-input"
           type="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={(e) => {
+            setInputText(e.target.value);
+            setIsInvalid(false);
+          }}
         />
         <button
           className="todo-input__button"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setIsInvalid(false);
+              if (!inputText.length) {
+                setIsInvalid(true);
+              }
+              dispatch(addTodo({
+                text: inputText,
+              }));
+            }
+          }}
           onClick={(e) => {
             e.preventDefault();
-            if (inputText.length > 0) {
-              dispatch(addTodo({ id: Math.random(), text: inputText, isCompleted: false }));
+            setIsInvalid(false);
+            if (inputText.length) {
+              dispatch(addTodo({
+                text: inputText,
+              }));
+            } else {
+              setIsInvalid(true);
             }
             setInputText('');
           }}
@@ -52,6 +72,7 @@ const TodoInput = () => {
           Add
         </button>
       </form>
+      {isInvalid && <h3 style={{ color: 'red' }}>No empty textbox. Please enter task text.</h3>}
     </div>
   );
 };
