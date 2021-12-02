@@ -23,7 +23,7 @@ const TodoItem: FC<TodoItemInterface> = ({
   return (
     <div
       className="todo-item__container"
-      style={{ cursor: item.editMode ? 'default' : 'pointer' }}
+      style={{ cursor: item.editMode ? 'default' : 'pointer', gridTemplateColumns: '' }}
       onClick={() => {
         if (!item.editMode) {
           dispatch(completeTodo(item.id));
@@ -51,6 +51,12 @@ const TodoItem: FC<TodoItemInterface> = ({
               }}
               onChange={(e: ChangeEvent<HTMLInputElement>) => todoEditHandler(e.target.value)}
             />
+            <input
+              className="todo-item__file"
+              style={{ display: item.editMode ? 'block' : 'none', overflowWrap: 'break-word' }}
+              type="file"
+              accept=".jpg, .jpeg, .png"
+            />
           </>
         ) : (
           <div
@@ -69,21 +75,21 @@ const TodoItem: FC<TodoItemInterface> = ({
         }}
       >
         <div
-          style={{ display: item.editMode ? 'flex' : 'none' }}
+          style={{ visibility: item.editMode ? 'visible' : 'hidden' }}
           onClick={() => dispatch(addTodoTag({ todoId: item.id, tagName: 'Today' }))}
           className={item.tag === 'Today' ? 'todo-item__tag todo-item__tag--active' : 'todo-item__tag'}
         >
           Today
         </div>
         <div
-          style={{ display: item.editMode ? 'flex' : 'none' }}
+          style={{ visibility: item.editMode ? 'visible' : 'hidden' }}
           onClick={() => dispatch(addTodoTag({ todoId: item.id, tagName: 'This Week' }))}
           className={item.tag === 'This Week' ? 'todo-item__tag todo-item__tag--active' : 'todo-item__tag'}
         >
           This Week
         </div>
         <div
-          style={{ display: item.editMode ? 'flex' : 'none' }}
+          style={{ visibility: item.editMode ? 'visible' : 'hidden' }}
           onClick={() => dispatch(addTodoTag({ todoId: item.id, tagName: 'This Month' }))}
           className={item.tag === 'This Month' ? 'todo-item__tag todo-item__tag--active' : 'todo-item__tag'}
         >
@@ -101,7 +107,7 @@ const TodoItem: FC<TodoItemInterface> = ({
       >
         <img
           className="todo-item__check"
-          style={item.isCompleted ? { visibility: 'visible' } : { visibility: 'hidden' }}
+          style={item.isCompleted ? { display: 'block' } : { display: 'none' }}
           src="https://uxwing.com/wp-content/themes/uxwing/download/48-checkmark-cross/tick-mark.png"
           alt="check"
         />
